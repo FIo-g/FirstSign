@@ -60,6 +60,35 @@ npm run dev
 - 클라이언트: http://localhost:5173
 - 서버: http://localhost:4000
 
+## Vercel 배포
+
+프론트엔드와 백엔드(Express)를 한 Vercel 프로젝트로 배포합니다.
+
+- 클라이언트는 정적 빌드(`client/dist`)로 서빙됩니다.
+- `api/index.ts`가 Express 앱을 서버리스 함수로 감싸 `/api/*` 요청을 처리합니다.
+- 배포 설정은 루트 `vercel.json`에 들어 있습니다.
+
+### 배포 절차
+
+1. 이 저장소를 Vercel에 새 프로젝트로 연결합니다 (Root Directory는 저장소 루트 그대로).
+2. 프로젝트 설정 > Environment Variables에 `GEMINI_API_KEY`를 추가합니다.
+3. 배포하면 `vercel.json`에 따라 빌드·라우팅됩니다.
+
+또는 CLI로:
+
+```bash
+npm i -g vercel
+vercel            # 미리보기 배포
+vercel --prod     # 운영 배포
+```
+
+### 배포 환경 참고사항
+
+- **요청 본문 한도**: Vercel 서버리스 함수는 본문이 약 4.5MB로 제한됩니다.
+  클라이언트가 업로드 전 이미지를 자동 축소·압축하므로 일반적인 사진은 문제없이 전송됩니다.
+- **함수 타임아웃**: AI 분석에 시간이 걸리므로 `vercel.json`에서 `maxDuration`을 60초로 설정했습니다.
+- `GEMINI_API_KEY`는 `.env` 파일이 아니라 Vercel 환경 변수로 주입됩니다.
+
 ## API 명세
 
 ### POST /api/analyze

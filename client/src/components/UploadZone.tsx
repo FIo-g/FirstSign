@@ -2,7 +2,44 @@ import { useRef, useState } from 'react';
 import type { ChangeEvent, DragEvent } from 'react';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
-const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_SIZE = 10 * 1024 * 1024; // 10MB (선택 가능한 원본 크기 한도)
+const MAX_DIMENSION = 2000; // 압축 후 가장 긴 변의 최대 픽셀
+
+/**
+ * 업로드 전 이미지를 축소·재인코딩한다.
+ * 서버리스 환경의 요청 본문 한도(약 4.5MB)를 넘지 않게 하고,
+ * AI 분석 비용·지연도 줄인다. 실패하면 원본을 그대로 반환한다.
+ */
+async function compressImage(file: File): Promise<File> {
+  try {
+    const bitmap = await createImageBitmap(file);
+    let { width, height } = bitmap;
+    const longest = Math.max(width, height);
+    if (longest > MAX_DIMENSION) {
+      const scale = MAX_DIMENSION / longest;
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, 'image/jpeg', 0.85),
+    );
+    if (!blob || blob.size >= file.size) return file;
+
+    const name = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+    return new File([blob], name, { type: 'image/jpeg' });
+  } catch {
+    return file;
+  }
+}
 
 interface UploadZoneProps {
   onFile: (file: File) => void;
@@ -15,7 +52,7 @@ function UploadZone({ onFile, disabled = false }: UploadZoneProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  function validateAndSend(file: File) {
+  async function validateAndSend(file: File) {
     if (!ALLOWED_TYPES.includes(file.type)) {
       setError('jpg, png 이미지 파일만 업로드할 수 있습니다.');
       return;
@@ -25,7 +62,7 @@ function UploadZone({ onFile, disabled = false }: UploadZoneProps) {
       return;
     }
     setError(null);
-    onFile(file);
+    onFile(await compressImage(file));
   }
 
   function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
