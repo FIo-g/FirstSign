@@ -23,16 +23,19 @@ const router = Router();
 router.post('/analyze', (req, res) => {
   upload.single('image')(req, res, async (uploadErr: unknown) => {
     if (uploadErr) {
-      const tooLarge = uploadErr instanceof MulterError && uploadErr.code === 'LIMIT_FILE_SIZE';
-      const body: AnalyzeResponse = {
-        success: false,
-        error: tooLarge
-          ? '파일 크기가 너무 큽니다. (최대 10MB)'
-          : uploadErr instanceof Error
-            ? uploadErr.message
-            : '파일 업로드에 실패했습니다.',
-      };
-      res.status(tooLarge ? 413 : 400).json(body);
+      const code = uploadErr instanceof MulterError ? uploadErr.code : null;
+      let message: string;
+      if (code === 'LIMIT_FILE_SIZE') {
+        message = '파일 크기가 너무 큽니다. (최대 10MB)';
+      } else if (code === 'LIMIT_UNEXPECTED_FILE') {
+        message = '이미지는 image 필드로 1개만 업로드해 주세요.';
+      } else if (uploadErr instanceof Error) {
+        message = uploadErr.message;
+      } else {
+        message = '파일 업로드에 실패했습니다.';
+      }
+      const body: AnalyzeResponse = { success: false, error: message };
+      res.status(code === 'LIMIT_FILE_SIZE' ? 413 : 400).json(body);
       return;
     }
 
