@@ -3,4 +3,5 @@ dist/
 .env
 *.log
 *.tsbuildinfo
+.vercel
 .DS_Store
