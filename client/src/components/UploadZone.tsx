@@ -61,7 +61,7 @@ function UploadZone({ onFile, disabled = false }: UploadZoneProps) {
         }`}
       >
         <p className="text-lg font-semibold text-slate-700">
-          근로계약서 사진을 올려주세요
+          계약서 사진을 올려주세요
         </p>
         <p className="mt-1 text-sm text-slate-500">
           이미지를 드래그하거나 클릭해서 선택하세요 (jpg, png · 최대 10MB)

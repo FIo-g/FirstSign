@@ -1,4 +1,5 @@
 import type { AnalysisData } from '../types';
+import { CONTRACT_TYPE_LABEL } from '../types';
 import RiskBadge, { RISK_META } from './RiskBadge';
 import ClauseCard from './ClauseCard';
 
@@ -17,7 +18,7 @@ function AnalysisResult({ data, imageUrl }: AnalysisResultProps) {
         <p className="mb-2 text-sm font-semibold text-slate-500">업로드한 계약서</p>
         <img
           src={imageUrl}
-          alt="업로드한 근로계약서"
+          alt="업로드한 계약서"
           className="w-full rounded-lg border border-slate-200 shadow-sm"
         />
       </div>
@@ -26,7 +27,12 @@ function AnalysisResult({ data, imageUrl }: AnalysisResultProps) {
       <div>
         <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-lg font-bold text-slate-800">종합 진단</h2>
+            <div>
+              <h2 className="text-lg font-bold text-slate-800">종합 진단</h2>
+              <p className="mt-0.5 text-sm text-slate-500">
+                감지된 계약서: {CONTRACT_TYPE_LABEL[data.contractType]}
+              </p>
+            </div>
             <RiskBadge risk={data.overallRisk} size="lg" />
           </div>
 
@@ -68,7 +74,7 @@ function AnalysisResult({ data, imageUrl }: AnalysisResultProps) {
           </h3>
           {data.issues.length === 0 ? (
             <p className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-              5가지 검증 규칙에 해당하는 위험 조항이 발견되지 않았습니다.
+              검토 기준에 해당하는 위험 조항이 발견되지 않았습니다.
             </p>
           ) : (
             <div className="space-y-3">
@@ -80,8 +86,8 @@ function AnalysisResult({ data, imageUrl }: AnalysisResultProps) {
         </section>
 
         <p className="mt-4 text-xs text-slate-400">
-          본 결과는 5가지 객관적 규칙에 따른 참고용 분석이며, 법적 효력을 갖는 자문이
-          아닙니다.
+          본 결과는 계약서 종류별 객관적 규칙(기타 계약서는 범용 기준)에 따른 참고용
+          분석이며, 법적 효력을 갖는 자문이 아닙니다.
         </p>
       </div>
     </div>

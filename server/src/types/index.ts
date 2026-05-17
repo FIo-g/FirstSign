@@ -1,15 +1,10 @@
 export type RiskLevel = 'safe' | 'caution' | 'danger';
 
-export type RuleCode =
-  | 'LABOR_MIN_WAGE'
-  | 'LABOR_NO_BREAK'
-  | 'LABOR_NO_WEEKLY_PAY'
-  | 'LABOR_PENALTY'
-  | 'LABOR_REQUIRED_TERMS';
+export type ContractType = 'labor' | 'lease' | 'service' | 'other';
 
 export interface Issue {
   id: string;
-  ruleCode: RuleCode;
+  ruleCode: string;
   riskLevel: RiskLevel;
   title: string;
   detectedText: string;
@@ -19,6 +14,7 @@ export interface Issue {
 }
 
 export interface AnalysisData {
+  contractType: ContractType;
   overallRisk: RiskLevel;
   riskScore: number;
   summary: string;
@@ -31,8 +27,3 @@ export interface AnalyzeResponse {
   data?: AnalysisData;
   error?: string;
 }
-
-/** Gemini가 반환하는 원본 JSON 형태 (성공 또는 거부) */
-export type GeminiRawResult =
-  | { error: string }
-  | (Partial<AnalysisData> & { error?: undefined });

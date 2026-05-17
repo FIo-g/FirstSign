@@ -46,9 +46,9 @@ function App() {
     <div className="min-h-screen bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-4xl px-4 py-4">
-          <h1 className="text-xl font-bold text-slate-800">근로계약서 AI 검토</h1>
+          <h1 className="text-xl font-bold text-slate-800">계약서 AI 검토</h1>
           <p className="mt-0.5 text-sm text-slate-500">
-            사인하기 전 30초, 내 권리를 확인하세요.
+            사인하기 전 30초, 내 권리를 확인하세요. (근로·임대차·용역 계약서)
           </p>
         </div>
       </header>
@@ -68,7 +68,7 @@ function App() {
             {imageUrl && (
               <img
                 src={imageUrl}
-                alt="업로드한 근로계약서"
+                alt="업로드한 계약서"
                 className="mt-6 max-h-64 rounded-lg border border-slate-200 shadow-sm"
               />
             )}

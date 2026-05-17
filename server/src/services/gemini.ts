@@ -1,9 +1,9 @@
 import { randomUUID } from 'crypto';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ANALYSIS_PROMPT } from '../prompts/analysisPrompt';
-import type { AnalysisData, Issue, RiskLevel, RuleCode } from '../types';
+import type { AnalysisData, ContractType, Issue, RiskLevel } from '../types';
 
-/** Gemini가 이미지를 정상적인 근로계약서로 처리하지 못한 경우 (사용자 입력 오류). */
+/** Gemini가 이미지를 정상적인 계약서로 처리하지 못한 경우 (사용자 입력 오류). */
 export class AnalysisRejectedError extends Error {
   constructor(message: string) {
     super(message);
@@ -13,14 +13,8 @@ export class AnalysisRejectedError extends Error {
 
 const MODEL_NAME = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
-const RULE_CODES: readonly RuleCode[] = [
-  'LABOR_MIN_WAGE',
-  'LABOR_NO_BREAK',
-  'LABOR_NO_WEEKLY_PAY',
-  'LABOR_PENALTY',
-  'LABOR_REQUIRED_TERMS',
-];
 const RISK_LEVELS: readonly RiskLevel[] = ['safe', 'caution', 'danger'];
+const CONTRACT_TYPES: readonly ContractType[] = ['labor', 'lease', 'service', 'other'];
 
 let client: GoogleGenerativeAI | null = null;
 
@@ -35,7 +29,7 @@ function getClient(): GoogleGenerativeAI {
   return client;
 }
 
-/** 근로계약서 이미지를 분석한다. 거부 시 AnalysisRejectedError, 그 외 실패는 Error. */
+/** 계약서 이미지를 분석한다. 거부 시 AnalysisRejectedError, 그 외 실패는 Error. */
 export async function analyzeContract(
   imageBuffer: Buffer,
   mimeType: string,
@@ -89,21 +83,22 @@ function asString(value: unknown): string {
   return typeof value === 'string' ? value : '';
 }
 
-function isRuleCode(value: unknown): value is RuleCode {
-  return typeof value === 'string' && (RULE_CODES as readonly string[]).includes(value);
-}
-
 function isRiskLevel(value: unknown): value is RiskLevel {
   return typeof value === 'string' && (RISK_LEVELS as readonly string[]).includes(value);
 }
 
+function isContractType(value: unknown): value is ContractType {
+  return typeof value === 'string' && (CONTRACT_TYPES as readonly string[]).includes(value);
+}
+
 function toIssue(raw: Record<string, unknown>): Issue | null {
-  if (!isRuleCode(raw.ruleCode)) {
+  const ruleCode = asString(raw.ruleCode).trim();
+  if (!ruleCode) {
     return null;
   }
   return {
     id: randomUUID(),
-    ruleCode: raw.ruleCode,
+    ruleCode,
     riskLevel: isRiskLevel(raw.riskLevel) ? raw.riskLevel : 'caution',
     title: asString(raw.title),
     detectedText: asString(raw.detectedText),
@@ -147,6 +142,7 @@ function normalize(raw: unknown): AnalysisData {
     .filter((s): s is string => typeof s === 'string');
 
   return {
+    contractType: isContractType(obj.contractType) ? obj.contractType : 'other',
     overallRisk,
     riskScore,
     summary: asString(obj.summary),
