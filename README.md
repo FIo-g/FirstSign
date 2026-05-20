@@ -1,105 +1,128 @@
-# 계약서 AI 검토 서비스 (MVP)
+<div align="center">
 
-계약서 사진을 업로드하면 Gemini API가 종류를 분류하고 위험 조항을 검출하여 위험도·근거를 알려주는 웹 서비스입니다.
+# 🦁 첫사인 (FirstSign)
 
-> 알바·인턴하는 대학생이 계약서에 사인하기 전 30초 안에 자신의 권리를 알 수 있게 합니다.
+### 사인하기 전 30초, AI가 짚어주는 계약서 위험 조항
 
-## 지원 계약서 종류
+**대학생만을 위한 AI 계약서 검토 서비스**
 
-업로드한 계약서의 종류를 자동 분류한 뒤, 종류별 객관적 규칙을 적용합니다.
+[![멋쟁이사자처럼](https://img.shields.io/badge/멋쟁이사자처럼-14기-FF7710.svg)](https://likelion.net)
+[![Status](https://img.shields.io/badge/status-MVP%20개발중-yellow.svg)]()
 
-- **근로계약서** — 최저임금, 휴게시간, 주휴수당, 위약금, 필수 기재사항
-- **주택 임대차계약서** — 계약기간, 수선의무, 보증금 반환, 위약금, 필수 기재사항
-- **용역·프리랜서·도급 계약서** — 대금 조건, 저작권 양도, 위약금, 일방적 해지권, 무상 수정
-- **기타 계약서** — 위 종류에 해당하지 않으면 일반적인 불공정 조항 관점에서 범용 검토
+[100초 피칭 영상](#) · [IR Deck](#) · [프로토타입](#)
 
-## 기술 스택
+</div>
 
-- **프론트엔드**: React + Vite + TypeScript + TailwindCSS
-- **백엔드**: Node.js + Express + TypeScript
-- **LLM/OCR**: Google Gemini API (멀티모달 — 이미지 직접 입력)
+---
 
-## 폴더 구조
+## 💭 "계약서, 진짜 다 읽고 사인하셨어요?"
+
+자취방 처음 구할 때, 알바 시작할 때, 외주를 맡길 때, 공모전 동의서에 체크할 때.
+대학생도 매년 수많은 계약서에 사인합니다.
+
+하지만 그 내용을 100% 이해하는 사람은 **1%도 되지 않습니다.**
+변호사 검토 한 번에 **30만 원**, 학생에겐 사실상 불가능한 비용입니다.
+
+> **첫사인**은 AI가 계약서를 30초 만에 검토하고,
+> 위험 조항을 사용자 눈높이로 짚어주는 서비스입니다.
+
+---
+
+## 💡 핵심 가치
+
+### AI는 주관적으로 판단하지 않습니다.
+
+법률 도메인에서 AI의 환각(hallucination)은 치명적입니다.
+저희는 이 문제를 **구조적으로** 해결했습니다.
+
+위험도 판단은 **세 가지 객관적 근거**로만 결정됩니다.
+
+<div align="center">
+
+| 🏛️ | ⚖️ | 📜 |
+|:--:|:--:|:--:|
+| **공정위 표준계약서** | **약관규제법·근로기준법** | **대법원 실제 판례** |
+| 표준 대비 편차 비교 | 법령 위반 패턴 매칭 | RAG 기반 판례 검색 |
+
+</div>
+
+**AI는 위 결과를 사용자 눈높이로 설명하는 역할만 합니다.**
+모든 결과에 **법령 조항·판례 번호**로 출처를 명시합니다.
+
+---
+
+## ✨ 주요 기능
+
+- 📸 **사진 한 장으로 즉시 검토** — 카메라로 찍거나 이미지 업로드만 하면 30초 안에 결과
+- 🚦 **위험도 신호등** — 🔴 위험 / 🟡 주의 / 🟢 안전 한눈에 파악
+- 🔍 **조항별 분석** — 검출된 원문과 위험 사유 명확히 표시
+- 📚 **법령·판례 출처** — 모든 결과에 근거 명시 (출처 없는 주장 X)
+- 🎯 **권장 행동 가이드** — 사용자가 바로 행동할 수 있도록 대응 방법 안내
+
+---
+
+## 📊 시장조사 (대학생 50명 설문)
+
+<div align="center">
+
+| **44.4%** | **92%** | **84%** |
+|:--:|:--:|:--:|
+| "너무 길고 어려워서<br>다 읽지 않았다" | 변호사 비용 30만 원이<br>"생각보다 비싸다" | 이런 AI 서비스<br>"사용해보고 싶다" |
+
+</div>
+
+---
+
+## 🎯 MVP & 로드맵
+
+이번 MVP는 학생들이 가장 자주 접하는 **근로계약서(알바·인턴)** 부터 시작합니다.
+근로기준법은 강행규정이 명확해 객관적 룰 베이스를 빠르게 구축할 수 있습니다.
 
 ```
-.
-├── client/        # React 프론트엔드
-├── server/        # Express 백엔드
-└── package.json   # 루트 (concurrently로 동시 실행)
+[MVP] 근로계약서  →  자취 임대차  →  외주·용역  →  공동창업자 / NDA
 ```
 
-## 실행 방법
+---
 
-### 1. 의존성 설치
+## 🛠️ 기술 스택
 
-```bash
-npm run install:all
-```
+<div align="center">
 
-### 2. 환경 변수 설정
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
+![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
 
-`server/.env.example`를 복사해 `server/.env`를 만들고 Gemini API 키를 입력합니다.
+</div>
 
-```bash
-cp server/.env.example server/.env
-```
+---
 
-```
-GEMINI_API_KEY=여기에_API_키_입력
-PORT=4000
-```
+## 👥 팀 — 언더독레볼루션
 
-API 키는 [Google AI Studio](https://aistudio.google.com/apikey)에서 발급받을 수 있습니다.
+**고려대학교 세종캠퍼스**
 
-### 3. 개발 서버 실행
+<div align="center">
 
-```bash
-npm run dev
-```
+| 김태형 | 이제원 | 신재원 | 김석현 | 이지수 | 김동윤 |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| 조장·기획 | 프론트엔드 | 프론트엔드 | 백엔드 | 백엔드 | 백엔드 |
 
-- 클라이언트: http://localhost:5173
-- 서버: http://localhost:4000
+</div>
 
-## Vercel 배포
+---
 
-프론트엔드와 백엔드(Express)를 한 Vercel 프로젝트로 배포합니다.
+## ⚠️ 면책 조항
 
-- 클라이언트는 정적 빌드(`client/dist`)로 서빙됩니다.
-- `api/index.ts`가 Express 앱을 서버리스 함수로 감싸 `/api/*` 요청을 처리합니다.
-- 배포 설정은 루트 `vercel.json`에 들어 있습니다.
+본 서비스는 **법률 자문이 아닌 검토 보조 도구**입니다.
+중요한 계약은 반드시 변호사·노무사 등 전문가의 상담을 권장합니다.
 
-### 배포 절차
+---
 
-1. 이 저장소를 Vercel에 새 프로젝트로 연결합니다 (Root Directory는 저장소 루트 그대로).
-2. 프로젝트 설정 > Environment Variables에 `GEMINI_API_KEY`를 추가합니다.
-3. 배포하면 `vercel.json`에 따라 빌드·라우팅됩니다.
+<div align="center">
 
-또는 CLI로:
+### 대학생 여러분의 첫 계약, 첫사인이 함께하겠습니다.
 
-```bash
-npm i -g vercel
-vercel            # 미리보기 배포
-vercel --prod     # 운영 배포
-```
+**🦁 언더독레볼루션 · 멋쟁이사자처럼 14기 아이디어톤**
 
-### 배포 환경 참고사항
-
-- **요청 본문 한도**: Vercel 서버리스 함수는 본문이 약 4.5MB로 제한됩니다.
-  클라이언트가 업로드 전 이미지를 자동 축소·압축하므로 일반적인 사진은 문제없이 전송됩니다.
-- **함수 타임아웃**: AI 분석에 시간이 걸리므로 `vercel.json`에서 `maxDuration`을 60초로 설정했습니다.
-- `GEMINI_API_KEY`는 `.env` 파일이 아니라 Vercel 환경 변수로 주입됩니다.
-
-## API 명세
-
-### POST /api/analyze
-
-계약서 이미지를 분석합니다.
-
-- **요청**: `multipart/form-data`, 필드명 `image` (jpg/png/jpeg, 최대 10MB)
-- **응답**: JSON (위험도, 위험 점수, 조항별 분석 결과)
-
-## MVP 원칙
-
-- DB 없음 (모든 검증 규칙은 프롬프트에 하드코딩)
-- 회원가입 없음 (세션 메모리만)
-- 핵심 기능 1개: 사진 업로드 → AI 검토 결과 표시
+</div>
