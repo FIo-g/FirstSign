@@ -9,7 +9,7 @@
 [![멋쟁이사자처럼](https://img.shields.io/badge/멋쟁이사자처럼-14기-FF7710.svg)](https://likelion.net)
 [![Status](https://img.shields.io/badge/status-MVP%20개발중-yellow.svg)]()
 
-[100초 피칭 영상](#) · [IR Deck](#) · [프로토타입](#)
+[100초 피칭 영상](https://youtu.be/jvBGpESx05A?si=kprTKBU2zwfwANmo) · [IR Deck](https://canva.link/fqinqddmgfhpob4) · [프로토타입](https://first-sign.vercel.app/)
 
 </div>
 
